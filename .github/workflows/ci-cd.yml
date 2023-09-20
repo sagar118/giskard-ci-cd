@@ -35,22 +35,23 @@ jobs:
             id: cache
             uses: actions/cache@v2
             with:
-              path: .venv/
+              path: .
               key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
           
           - name: Install dependencies
-            working-directory: .venv/
+            working-directory: .
             if: steps.cache.outputs.cache-hit != 'true'
             run: pipenv install --system --deploy
 
-          - name: execute test script
+          - name: Execute Giskard Test Suite
+            id: giskard_test_suite
             run: |
               python run_test_suite.py
-              echo "Output: "
-              echo ${{ env.OUTPUT }}
-            id: test_output
+              echo "::set-output name=output::${{ env.OUTPUT }}"
 
-        #   - name: comment on PR
-        #     uses: mshick/add-pr-comment@v2
-        #     with:
-        #       message: ${{ env.OUTPUT }}
+          - name: comment on PR
+            uses: mshick/add-pr-comment@v2
+            with:
+              message: |
+                  TestSuite Results:
+                  ${JSON.stringify(steps.giskard_test_suite.outputs.output, null, 2)}
