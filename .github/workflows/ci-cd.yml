@@ -44,14 +44,11 @@ jobs:
             run: pipenv install --system --deploy
 
           - name: Execute Giskard Test Suite
-            id: giskard_test_suite
-            run: |
-              python run_test_suite.py
-              echo "::set-output name=output::${{ env.OUTPUT }}"
+            run: python run_test_suite.py
 
           - name: comment on PR
             uses: mshick/add-pr-comment@v2
             with:
               message: |
                   TestSuite Results:
-                  ${JSON.stringify(steps.giskard_test_suite.outputs.output, null, 2)}
+                  ${{ env.OUTPUT }}
