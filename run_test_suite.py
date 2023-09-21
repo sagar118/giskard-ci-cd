@@ -1,4 +1,5 @@
 import os
+import re
 import pickle
 import numpy as np
 import pandas as pd
@@ -74,8 +75,8 @@ else:
 logging.info("Extracting the values of the test suite results using the `results` attribute")
 # output = dict()
 # for idx, test_result in enumerate(test_suite_results.results):
-#     output[idx] = {
-#         "Test": test_result[0],
+#     output[re.sub('"|`|“|”', "", test_result[0])] = {
+#         # "Test": ,
 #         "Status": test_result[1].passed,
 #         "Threshold": test_result[2]["threshold"],
 #         "Score": test_result[1].metric,
@@ -83,13 +84,16 @@ logging.info("Extracting the values of the test suite results using the `results
 
 output = list()
 for idx, test_result in enumerate(test_suite_results.results):
-    row = f"{test_result[0]}: {test_result[1].passed}\nThreshold: {test_result[2]['threshold']} | Score: {test_result[1].metric}"
+    testName = re.sub('"|`|“|”', "", test_result[0])
+    row = f'{testName}, Status: {test_result[1].passed}, Threshold: {test_result[2]["threshold"]}, Score: {test_result[1].metric}'
     output.append(row)
-output = "\n\n".join(output)
+output = "\n".join(output)
 
 # To log the results to a pull request comment, 
 # save the results as a GitHub environment variable
 logging.info("Saving the results as a GitHub environment variable")
-env_file = os.getenv("GITHUB_ENV")
-with open(env_file, "a") as myfile:
-    myfile.write(f"OUTPUT={output}")
+# env_file = os.getenv("GITHUB_ENV")
+# with open("tmp.txt", "a") as myfile:
+#     myfile.write(f"OUTPUT={output}")
+with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+    print(fr'TEST_RESULT={str(output)}', file=fh)

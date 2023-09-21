@@ -44,7 +44,13 @@ jobs:
             run: pipenv install --system --deploy
 
           - name: Execute Giskard Test Suite
+            id: run-test-suite
             run: python run_test_suite.py
+        
+          - name: Display output
+            run: echo ${{ steps.run-test-suite.outputs.TEST_RESULT }}}
+            #   result=$(IFS=$'\n'; echo "${{ env.OUTPUT[*] }}")
+            #   echo "$result"
 
           - name: comment on PR
             uses: mshick/add-pr-comment@v2
