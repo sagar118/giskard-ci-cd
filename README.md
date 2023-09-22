@@ -25,3 +25,20 @@ In this tutorial, we use a simple logistic regression model trained on the [Cust
 
 You can find the `trained model` in the `model` directory, and the `validation dataset` is provided in the data directory.
 
+Snapshots of the Scan Results, Test Suite Results, and CI/CD Integration are provided below.
+
+### Scan Results
+
+![Scan Results](./images/scan_results.png)
+
+### Test Suite Results
+
+![Test Suite Results](./images/test_suite_results.png)
+
+### CI/CD Workflow Initiated
+
+![CI/CD Workflow Initiated](./images/workflow_initiated.png)
+
+### PR Comment
+
+![PR Comment](./images/pr_comment.png)
