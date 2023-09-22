@@ -47,5 +47,5 @@ jobs:
                   issue_number: context.issue.number,
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  body: 'Here is the formatted JSON: ```' + JSON.stringify(env.TEST_RESULT, null, 2) + '```'
+                  body: 'Here is the formatted JSON: ```' + JSON.stringify(process.env.TEST_RESULT, null, 2) + '```'
                 })
