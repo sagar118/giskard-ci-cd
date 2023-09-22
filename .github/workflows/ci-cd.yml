@@ -36,7 +36,6 @@ jobs:
             run: pipenv install --system --deploy
 
           - name: Execute Giskard Test Suite
-            # id: run-test-suite
             run: python run_test_suite.py
           
           - name: PR comment
