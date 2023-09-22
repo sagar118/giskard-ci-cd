@@ -31,30 +31,21 @@ jobs:
               pip install --upgrade pip
               pip install pipenv
 
-          - name: Cache pipenv
-            id: cache
-            uses: actions/cache@v2
-            with:
-              path: .
-              key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
-          
           - name: Install dependencies
             working-directory: .
-            if: steps.cache.outputs.cache-hit != 'true'
             run: pipenv install --system --deploy
 
           - name: Execute Giskard Test Suite
-            id: run-test-suite
+            # id: run-test-suite
             run: python run_test_suite.py
-        
-          - name: Display output
-            run: echo ${{ steps.run-test-suite.outputs.TEST_RESULT }}}
-            #   result=$(IFS=$'\n'; echo "${{ env.OUTPUT[*] }}")
-            #   echo "$result"
-
-          - name: comment on PR
-            uses: mshick/add-pr-comment@v2
+          
+          - name: PR comment
+            uses: actions/github-script@v6
             with:
-              message: |
-                  TestSuite Results:
-                  ${{ env.OUTPUT }}
+              script: |
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: '$(echo "${{ env.TEST_RESULT }}" | jq .)'
+                })

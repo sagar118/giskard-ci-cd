@@ -73,27 +73,30 @@ else:
 
 # Extract the values of the test suite results using the `results` attribute
 logging.info("Extracting the values of the test suite results using the `results` attribute")
-# output = dict()
-# for idx, test_result in enumerate(test_suite_results.results):
-#     output[re.sub('"|`|“|”', "", test_result[0])] = {
-#         # "Test": ,
-#         "Status": test_result[1].passed,
-#         "Threshold": test_result[2]["threshold"],
-#         "Score": test_result[1].metric,
-#     }
-
-output = list()
+output = dict()
 for idx, test_result in enumerate(test_suite_results.results):
-    testName = re.sub('"|`|“|”', "", test_result[0])
-    row = f'{testName}, Status: {test_result[1].passed}, Threshold: {test_result[2]["threshold"]}, Score: {test_result[1].metric}'
-    output.append(row)
-output = "\n".join(output)
+    output[re.sub('"|`|“|”', "", test_result[0])] = {
+        # "Test": ,
+        "Status": test_result[1].passed,
+        "Threshold": test_result[2]["threshold"],
+        "Score": test_result[1].metric,
+    }
+
+# output = list()
+# for idx, test_result in enumerate(test_suite_results.results):
+#     testName = re.sub('"|`|“|”', "", test_result[0])
+#     row = f'{testName}, Status: {test_result[1].passed}, Threshold: {test_result[2]["threshold"]}, Score: {test_result[1].metric}'
+#     output.append(row)
+# output = "\n".join(output)
 
 # To log the results to a pull request comment, 
 # save the results as a GitHub environment variable
 logging.info("Saving the results as a GitHub environment variable")
 # env_file = os.getenv("GITHUB_ENV")
-# with open("tmp.txt", "a") as myfile:
-#     myfile.write(f"OUTPUT={output}")
-with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-    print(fr'TEST_RESULT={str(output)}', file=fh)
+import json
+# with open("../tmp.txt", "a") as myfile:
+#     myfile.write(f"OUTPUT={json.dumps(output)}")
+# with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+#     print(f'TEST_RESULT={json.dumps(output)}', file=fh)
+with open(os.getenv("GITHUB_ENV"), 'a') as fh:
+    fh.write(f'TEST_RESULT={json.dumps(output)}')
