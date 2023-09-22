@@ -31,27 +31,21 @@ jobs:
               pip install --upgrade pip
               pip install pipenv
 
-          - name: Cache pipenv
-            id: cache
-            uses: actions/cache@v2
-            with:
-              path: .
-              key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
-          
           - name: Install dependencies
             working-directory: .
-            if: steps.cache.outputs.cache-hit != 'true'
             run: pipenv install --system --deploy
 
           - name: Execute Giskard Test Suite
-            id: giskard_test_suite
-            run: |
-              python run_test_suite.py
-              echo "::set-output name=output::${{ env.OUTPUT }}"
-
-          - name: comment on PR
-            uses: mshick/add-pr-comment@v2
+            # id: run-test-suite
+            run: python run_test_suite.py
+          
+          - name: PR comment
+            uses: actions/github-script@v6
             with:
-              message: |
-                  TestSuite Results:
-                  ${JSON.stringify(steps.giskard_test_suite.outputs.output, null, 2)}
+              script: |
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: 'Here is the formatted JSON:\n\n```json\n' + JSON.stringify(JSON.parse(process.env.TEST_RESULT), null, 2) + '\n```'
+                })
