@@ -3,6 +3,10 @@ name: Giskard-CI-CD
 on:
   workflow_dispatch:
   pull_request:
+    paths:
+      - 'data/**'
+      - 'model/**'
+      - 'run_test_suite.py'
     branches:
       - main
 
